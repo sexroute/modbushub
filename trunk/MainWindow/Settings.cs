@@ -58,9 +58,14 @@ namespace MainWindow
             this.DataBit = this.m_oSettings.IniReadIntValue("slave", "data_bits",
                8, true);
 
-            if (this.DataBit <= 0)
+            if (this.DataBit <= 5)
             {
-                this.DataBit = 0;
+                this.DataBit = 5;
+            }
+
+            if (this.DataBit > 8)
+            {
+                this.DataBit = 8;
             }
 
             int lnTemp =
