@@ -52,7 +52,7 @@ namespace MainWindow
             {
                 string lstrValue = Enum.GetName(typeof(StopBits), (StopBits)i);
                 this.cbxStopBits.Items.Add(lstrValue);
-                if (i==Settings.Default.StopBits)
+                if (i==Settings.Default.StopBit)
                 {
                     this.cbxStopBits.SelectedIndex = i;
                 }
@@ -68,6 +68,9 @@ namespace MainWindow
             {
                 Settings.Default.ByteOrder = (int)ByteOrder.CDAB;
             }
+
+            //7.databits
+            this.npdDataBits.Value = Settings.Default.DataBits;
 
             this.cbxByteOrder.SelectedIndex = Settings.Default.ByteOrder;
 
@@ -128,8 +131,8 @@ namespace MainWindow
             Settings.Default.SalveID = (int)this.numSalveID.Value;
             Settings.Default.Baud = (int)this.NumBaud.Value;
             Settings.Default.Parity = this.cbxParity.SelectedIndex;
-            Settings.Default.StopBits = this.cbxStopBits.SelectedIndex;
-           
+            Settings.Default.StopBit = this.cbxStopBits.SelectedIndex;
+            Settings.Default.DataBits = Convert.ToInt32(this.npdDataBits.Value);
             Settings.Default.Save();
             Settings.Default.Reload();
             Settings.Default.ByteOrder = this.cbxByteOrder.SelectedIndex;

@@ -349,14 +349,14 @@ namespace MainWindow
                 return false;
             }
             int lnBaudRate = Settings.Default.Baud;
-            int lnDataBits = Settings.Default.DataBit;
+            int lnDataBits = Settings.Default.DataBits;
             int lnParity = Settings.Default.Parity;
             if ((lnParity > (int)Parity.Space) || (lnParity < (int)Parity.None))
             {
                 lnParity = (int)Parity.None;
             }
             Parity loParity = (Parity)lnParity;
-            int lnStopBits = Settings.Default.StopBits;
+            int lnStopBits = Settings.Default.StopBit;
             if ((lnStopBits > (int)StopBits.OnePointFive) || (lnStopBits < (int)StopBits.None))
             {
                 lnStopBits = (int)StopBits.None;
@@ -372,7 +372,8 @@ namespace MainWindow
                  loParity,
                  loStopBits,
                  Handshake.None);
-            this.m_oModBus.RemoteByteOrder = (ByteOrder)Settings.Default.ByteOrder;
+            this.m_oModBus.InnerDataByteOrder = (ByteOrder)Settings.Default.ByteOrder;
+            this.m_oModBus.OutDataByteOrder = this.m_oModBus.InnerDataByteOrder;
             this.m_oModbusExports = new List<Modbus.ModbusSlave>();
             foreach(String lstrKey in Settings.Default.ComNumberExports.Keys)
             //for (int i = 0; i < Settings.Default.ComNumberExports.Count;i++ )
@@ -386,9 +387,9 @@ namespace MainWindow
                   loParity,
                   loStopBits,
                   Handshake.None);
-                loModbus.RemoteByteOrder = (ByteOrder)Enum.Parse(typeof(Modbus.ByteOrder),
+                loModbus.OutDataByteOrder = (ByteOrder)Enum.Parse(typeof(Modbus.ByteOrder),
                     Settings.Default.ComNumberExports[lstrKey]);
-
+                loModbus.InnerDataByteOrder = this.m_oModBus.InnerDataByteOrder;
                 loModbus.ModbusDB = this.m_oModBus.ModbusDB;
 
                 this.m_oModbusExports.Add(loModbus);

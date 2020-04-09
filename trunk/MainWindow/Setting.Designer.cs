@@ -44,8 +44,11 @@
             this.BtnEditExports = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.cbxByteOrder = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.npdDataBits = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.NumBaud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSalveID)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.npdDataBits)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -68,7 +71,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(274, 271);
+            this.btnCancel.Location = new System.Drawing.Point(274, 300);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(104, 23);
             this.btnCancel.TabIndex = 0;
@@ -78,7 +81,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(163, 271);
+            this.btnSave.Location = new System.Drawing.Point(163, 300);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(104, 23);
             this.btnSave.TabIndex = 8;
@@ -151,7 +154,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(110, 169);
+            this.label4.Location = new System.Drawing.Point(110, 198);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(47, 12);
             this.label4.TabIndex = 9;
@@ -161,7 +164,7 @@
             // 
             this.cbxParity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxParity.FormattingEnabled = true;
-            this.cbxParity.Location = new System.Drawing.Point(163, 164);
+            this.cbxParity.Location = new System.Drawing.Point(163, 193);
             this.cbxParity.Name = "cbxParity";
             this.cbxParity.Size = new System.Drawing.Size(219, 20);
             this.cbxParity.TabIndex = 5;
@@ -169,7 +172,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(98, 203);
+            this.label5.Location = new System.Drawing.Point(98, 232);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(59, 12);
             this.label5.TabIndex = 11;
@@ -179,7 +182,7 @@
             // 
             this.cbxStopBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxStopBits.FormattingEnabled = true;
-            this.cbxStopBits.Location = new System.Drawing.Point(163, 197);
+            this.cbxStopBits.Location = new System.Drawing.Point(163, 226);
             this.cbxStopBits.Name = "cbxStopBits";
             this.cbxStopBits.Size = new System.Drawing.Size(219, 20);
             this.cbxStopBits.TabIndex = 6;
@@ -206,7 +209,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(2, 236);
+            this.label7.Location = new System.Drawing.Point(2, 265);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(155, 12);
             this.label7.TabIndex = 15;
@@ -216,16 +219,49 @@
             // 
             this.cbxByteOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxByteOrder.FormattingEnabled = true;
-            this.cbxByteOrder.Location = new System.Drawing.Point(163, 233);
+            this.cbxByteOrder.Location = new System.Drawing.Point(163, 262);
             this.cbxByteOrder.Name = "cbxByteOrder";
             this.cbxByteOrder.Size = new System.Drawing.Size(219, 20);
             this.cbxByteOrder.TabIndex = 7;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(90, 165);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 12);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "Data bits:";
+            // 
+            // npdDataBits
+            // 
+            this.npdDataBits.Location = new System.Drawing.Point(163, 160);
+            this.npdDataBits.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.npdDataBits.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.npdDataBits.Name = "npdDataBits";
+            this.npdDataBits.Size = new System.Drawing.Size(219, 21);
+            this.npdDataBits.TabIndex = 17;
+            this.npdDataBits.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // Setting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(396, 314);
+            this.ClientSize = new System.Drawing.Size(396, 353);
+            this.Controls.Add(this.npdDataBits);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.cbxByteOrder);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.BtnEditExports);
@@ -249,6 +285,7 @@
             this.Load += new System.EventHandler(this.Setting_Load);
             ((System.ComponentModel.ISupportInitialize)(this.NumBaud)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSalveID)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.npdDataBits)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,5 +309,7 @@
         private System.Windows.Forms.Button BtnEditExports;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbxByteOrder;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown npdDataBits;
     }
 }

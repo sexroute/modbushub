@@ -16,8 +16,8 @@ namespace MainWindow
         public int SalveID = 1;
         public int Baud = 9600;
         public int Parity = 0; 
-        public int StopBits = 1;   
-        public int DataBit = 8;
+        public int StopBit = 1;   
+        public int DataBits = 8;
         public global::Modbus.ModbusSerialType ModbusType
             = Modbus.ModbusSerialType.RTU;
         
@@ -47,25 +47,25 @@ namespace MainWindow
             {
                 this.Parity = 0;
             }
-            this.StopBits = this.m_oSettings.IniReadIntValue("slave", "StopBits",
+            this.StopBit = this.m_oSettings.IniReadIntValue("slave", "stop_bit",
                1, true);
 
-            if (this.StopBits <= 0)
+            if (this.StopBit <= 0)
             {
-                this.StopBits = 0;
+                this.StopBit = 0;
             }
 
-            this.DataBit = this.m_oSettings.IniReadIntValue("slave", "data_bits",
+            this.DataBits = this.m_oSettings.IniReadIntValue("slave", "data_bits",
                8, true);
 
-            if (this.DataBit <= 5)
+            if (this.DataBits <= 5)
             {
-                this.DataBit = 5;
+                this.DataBits = 5;
             }
 
-            if (this.DataBit > 8)
+            if (this.DataBits > 8)
             {
-                this.DataBit = 8;
+                this.DataBits = 8;
             }
 
             int lnTemp =
@@ -120,11 +120,11 @@ namespace MainWindow
             this.m_oSettings.iniWriteIntValue("slave", "baud_rate",
                Baud);
             this.m_oSettings.iniWriteIntValue("slave", "parity",
-               Baud);
-            this.m_oSettings.iniWriteIntValue("slave", "parity",
-               StopBits);
+               this.Parity);
+            this.m_oSettings.iniWriteIntValue("slave", "stop_bit",
+               StopBit);
             this.m_oSettings.iniWriteIntValue("slave", "data_bits",
-               StopBits);
+               DataBits);
 
             this.m_oSettings.iniWriteIntValue("slave", "modbus_serial_type",
                (int)ModbusType);

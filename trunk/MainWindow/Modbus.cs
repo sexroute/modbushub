@@ -348,6 +348,16 @@ namespace Modbus
             return array;
         }
 
+        protected byte[] GetBytesNoChangeSEQ(ushort value)
+        {
+            byte[] array = new byte[2];
+
+            array[1] = (byte)(value >> 8);
+            array[0] = (byte)(value & 0x00FF);
+
+            return array;
+        }
+
         /// <summary>
         /// Return an array of bytes coded in ASCII according to Modbus specification
         /// </summary>
@@ -1654,11 +1664,18 @@ namespace Modbus
             AdjAndReply(flux, unit_id);
         }
 
-        private ByteOrder m_RemoteByteOrder = ByteOrder.CDAB;
-        public Modbus.ByteOrder RemoteByteOrder
+        private ByteOrder m_oInnerDataByteOrder = ByteOrder.CDAB;
+        public Modbus.ByteOrder InnerDataByteOrder
         {
-            get { lock(this)return m_RemoteByteOrder; }
-            set { lock (this) m_RemoteByteOrder = value; }
+            get { lock(this)return m_oInnerDataByteOrder; }
+            set { lock (this) m_oInnerDataByteOrder = value; }
+        }
+
+        ByteOrder m_oOutDataByteOrder = ByteOrder.CDAB;
+        public Modbus.ByteOrder OutDataByteOrder
+        {
+            get { return m_oOutDataByteOrder; }
+            set { m_oOutDataByteOrder = value; }
         }
         public static byte[] Change4BytesOrder(byte[] apBuffer, 
             ByteOrder aenumSrcOrder, 
@@ -1975,8 +1992,8 @@ namespace Modbus
                             //send_buffer.AddRange(GetBytes(modbus_db.Single(x => x.UnitID == unit_id).HoldingRegisters[sa + (ii / 2)]));
                         }
 
-                        byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), ByteOrder.CDAB,
-                            RemoteByteOrder);
+                        byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), InnerDataByteOrder,
+                            OutDataByteOrder);
                         send_buffer.AddRange(lpChanged);
                     }
                     catch
@@ -2016,12 +2033,13 @@ namespace Modbus
                         List<byte> send_buffer_temp = new List<byte>();
                         for (int ii = 0; ii < (qor * 2); ii += 2)
                         {
-                            send_buffer_temp.AddRange(GetBytes(modbus_db.Single(x => x.UnitID == unit_id).
+                            send_buffer_temp.AddRange(GetBytes
+                                (modbus_db.Single(x => x.UnitID == unit_id).
                                 InputRegisters[sa + (ii / 2)]));
                         }
 
-                        byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), ByteOrder.CDAB,
-                           RemoteByteOrder);
+                        byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), InnerDataByteOrder,
+                           OutDataByteOrder);
                         send_buffer.AddRange(lpChanged);
                     }
                     catch
@@ -2290,8 +2308,7 @@ namespace Modbus
                     }
                     // Second: Exec reading and prepare the reply
                     send_buffer.Add((byte)ModbusCodes.READ_WRITE_MULTIPLE_REGISTERS);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes((ushort)(qor * 2)),
-                    ByteOrder.CDAB, this.RemoteByteOrder));
+                    send_buffer.AddRange(GetBytes((ushort)(qor * 2)));
                     //send_buffer.AddRange(GetBytes((ushort)(qor * 2)));
                     try
                     {
@@ -2305,8 +2322,8 @@ namespace Modbus
                                 HoldingRegisters[sa + (ii / 2)]));
                         }
 
-                          byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), ByteOrder.CDAB,
-                           RemoteByteOrder);
+                          byte[] lpChanged = Change4BytesOrder(send_buffer_temp.ToArray(), OutDataByteOrder,
+                           InnerDataByteOrder);
                         send_buffer.AddRange(lpChanged);
                     
                     }
