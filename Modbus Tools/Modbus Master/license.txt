@@ -6,7 +6,7 @@ this license agreement and warranty. If you do not accept these terms you
 must cease using this software immediately.
 
 Copyright.
-Modbus Poll ("The Software") is copyright 2002-2018 by Witte Software,
+Modbus Poll ("The Software") is copyright 2002-2015 by Witte Software,
 all rights reserved.
 
 Evaluation and Registration.

@@ -61,33 +61,46 @@ namespace MainWindow
 
         private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-
-            if (this.Cache != null && e.ItemIndex >= m_nFirstItem
-                && e.ItemIndex < m_nFirstItem + this.Cache.Length
-                )
+            try
             {
-                //A cache hit, so get the ListViewItem from the cache instead of making a new one.
-                e.Item = m_oCache[e.ItemIndex - m_nFirstItem];
-
-            }
-            else
-            {
-                //A cache miss, so create a new ListViewItem and pass it back.
-                int x = e.ItemIndex;
-
-                if (x < this.PointLimit)
+//                 if (!this.ServerStarted)
+//                 {
+//                     this.listView1.VirtualListSize = 0;
+//                     return;
+//                 }
+                if (this.Cache != null && e.ItemIndex >= m_nFirstItem
+                                && e.ItemIndex < m_nFirstItem + this.Cache.Length
+                                )
                 {
-                    ListViewItem loItem = MakeUpItem(x);
-
-                    if (null != loItem)
-                    {
-                        e.Item = loItem;
-                    }
+                    //A cache hit, so get the ListViewItem from the cache instead of making a new one.
+                    e.Item = m_oCache[e.ItemIndex - m_nFirstItem];
 
                 }
+                else
+                {
+                    //A cache miss, so create a new ListViewItem and pass it back.
+                    int x = e.ItemIndex;
+
+                    if (x < this.PointLimit)
+                    {
+                        ListViewItem loItem = MakeUpItem(x);
+
+                        if (null != loItem)
+                        {
+                            e.Item = loItem;
+                        }
+
+                    }
 
 
+                }
             }
+            catch(Exception ex)
+            {
+                ThreadUiController.Fatal(ex);
+            }
+
+            
         }
 
         private void listView1_VirtualItemsSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e)
@@ -97,77 +110,143 @@ namespace MainWindow
 
         private void listView1_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
         {
-            //We've gotten a request to refresh the cache.
-            //First check if it's really neccesary.
-            if (this.Cache != null
-                && e.StartIndex >= m_nFirstItem
-                && e.EndIndex <= m_nFirstItem + this.Cache.Length)
+
+            try
             {
-                //If the newly requested cache is a subset of the old cache, 
-                //no need to rebuild everything, so do nothing.
-                return;
-            }
-
-            //Now we need to rebuild the cache.
-            this.m_nFirstItem = e.StartIndex;
-            int length = e.EndIndex - e.StartIndex + 1; //indexes are inclusive
-
-            this.Cache = new ListViewItem[length];
-
-            //Fill the cache with the appropriate ListViewItems.
-            int lnItemIndex = 0;
-
-            for (int i = 0; i < length; i++)
-            {
-                lnItemIndex = (i + m_nFirstItem);
-
-                if (lnItemIndex >= this.PointLimit)
+                if (!this.ServerStarted)
                 {
-                    continue;
+                    this.listView1.VirtualListSize = 0;
+                    return;
+                }
+                //We've gotten a request to refresh the cache.
+                //First check if it's really neccesary.
+                if (this.Cache != null
+                    && e.StartIndex >= m_nFirstItem
+                    && e.EndIndex <= m_nFirstItem + this.Cache.Length)
+                {
+                    //If the newly requested cache is a subset of the old cache, 
+                    //no need to rebuild everything, so do nothing.
+                    return;
                 }
 
-                ListViewItem loItem = MakeUpItem(lnItemIndex);
+                //Now we need to rebuild the cache.
+                this.m_nFirstItem = e.StartIndex;
+                int length = e.EndIndex - e.StartIndex + 1; //indexes are inclusive
 
-                if (null != loItem && this.Cache != null)
+                this.Cache = new ListViewItem[length];
+
+                //Fill the cache with the appropriate ListViewItems.
+                int lnItemIndex = 0;
+
+                for (int i = 0; i < length; i++)
                 {
-                    m_oCache[i] = loItem;
+                    lnItemIndex = (i + m_nFirstItem);
+
+                    if (lnItemIndex >= this.PointLimit)
+                    {
+                        continue;
+                    }
+
+                    ListViewItem loItem = MakeUpItem(lnItemIndex);
+
+                    if (null != loItem && this.Cache != null)
+                    {
+                        m_oCache[i] = loItem;
+                    }
                 }
             }
+            catch(Exception ex)
+            {
+                ThreadUiController.Fatal(ex);
+            }
+            
         }
 
         private void listView1_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
         {
+            if (!this.ServerStarted)
+            {
+                this.listView1.VirtualListSize = 0;
+                return;
+            }
             double x = 0;
             if (Double.TryParse(e.Text, out x)) //check if this is a valid search
             {
                 x = Math.Sqrt(x);
                 x = Math.Round(x);
                 e.Index = (int)x;
-
             }
         }
-
+        Dictionary<int, Dictionary<int, String>> m_oDataBuffer
+            = new Dictionary<int, Dictionary<int, string>>();
         private ListViewItem MakeUpItem(int anIndex)
         {
             if (null == this.m_oModBus)
             {
-                return null;
+                ListViewItem aoTreeItem = new ListViewItem(anIndex + "");
+
+                Dictionary<int, string> lpRow = null;
+                if (this.m_oDataBuffer.ContainsKey(anIndex))
+                {
+                    lpRow = this.m_oDataBuffer[anIndex];
+                }
+
+                if (lpRow != null)
+                {
+                    aoTreeItem.SubItems.Add(lpRow[0]);
+                    aoTreeItem.SubItems.Add(lpRow[1]);
+                    aoTreeItem.SubItems.Add(lpRow[2]);
+                    aoTreeItem.SubItems.Add(lpRow[3]);
+                }else
+                {
+                    aoTreeItem.SubItems.Add("0");
+                    aoTreeItem.SubItems.Add("0");
+                    aoTreeItem.SubItems.Add("0");
+                    aoTreeItem.SubItems.Add("0");
+                }
+               
+                return aoTreeItem;
             }
             if (anIndex < this.PointLimit)
             {
-                Datastore loDataSource = this.m_oModBus.ModbusDB.Single(x => x.UnitID == Settings.Default.SalveID);
-
-                string lstrHoldingValue = loDataSource.HoldingRegisters[anIndex] + "";
-                string lstrInputValue = loDataSource.InputRegisters[anIndex] + "";
-                string lstrCoilsValue = loDataSource.Coils[anIndex] + "";
-                string lstrDiscreteValue = loDataSource.DiscreteInputs[anIndex] + "";
-
                 ListViewItem aoTreeItem = new ListViewItem(anIndex + "");
+                try
+                {
+                    Datastore loDataSource = this.m_oModBus.ModbusDB.Single(x => x.UnitID == Settings.Default.SalveID);
 
-                aoTreeItem.SubItems.Add(lstrHoldingValue);
-                aoTreeItem.SubItems.Add(lstrInputValue);
-                aoTreeItem.SubItems.Add(lstrCoilsValue);
-                aoTreeItem.SubItems.Add(lstrDiscreteValue);
+                    string lstrHoldingValue = loDataSource.HoldingRegisters[anIndex] + "";
+                    string lstrInputValue = loDataSource.InputRegisters[anIndex] + "";
+                    string lstrCoilsValue = loDataSource.Coils[anIndex] + "";
+                    string lstrDiscreteValue = loDataSource.DiscreteInputs[anIndex] + "";
+                    Dictionary<int, string> lpRow = null;
+                    if (this.m_oDataBuffer.ContainsKey(anIndex))
+                    {
+                        lpRow= this.m_oDataBuffer[anIndex];                       
+                    }
+
+                    if (lpRow == null)
+                    {
+                        lpRow = new Dictionary<int, string>();
+                        lpRow.Add(0, lstrHoldingValue);
+                        lpRow.Add(1, lstrInputValue);
+                        lpRow.Add(2, lstrCoilsValue);
+                        lpRow.Add(3, lstrDiscreteValue);
+                        this.m_oDataBuffer.Add(anIndex, lpRow);
+                    }
+
+                    aoTreeItem.SubItems.Add(lstrHoldingValue);
+                    aoTreeItem.SubItems.Add(lstrInputValue);
+                    aoTreeItem.SubItems.Add(lstrCoilsValue);
+                    aoTreeItem.SubItems.Add(lstrDiscreteValue);
+                }
+                catch(Exception e)
+                {
+                    aoTreeItem.SubItems.Add("");
+                    aoTreeItem.SubItems.Add("");
+                    aoTreeItem.SubItems.Add("");
+                    aoTreeItem.SubItems.Add("");
+                }
+
 
                 return aoTreeItem;
             }
@@ -186,13 +265,14 @@ namespace MainWindow
                 if (this.ServerStarted)
                 {
                     this.listView1.VirtualListSize = this.PointLimit;
+                    this.listView1.Refresh();
                 }
                 else
                 {
-                    this.listView1.VirtualListSize = 0;
+                    //this.listView1.VirtualListSize = 0;
                 }
 
-                this.listView1.Refresh();
+                
             }
             catch (System.Exception ex)
             {
@@ -294,9 +374,10 @@ namespace MainWindow
                  Handshake.None);
             this.m_oModBus.RemoteByteOrder = (ByteOrder)Settings.Default.ByteOrder;
             this.m_oModbusExports = new List<Modbus.ModbusSlave>();
-            for (int i = 0; i < Settings.Default.ComNumberExports.Count;i++ )
+            foreach(String lstrKey in Settings.Default.ComNumberExports.Keys)
+            //for (int i = 0; i < Settings.Default.ComNumberExports.Count;i++ )
             {
-                String lstrComport = Settings.Default.ComNumberExports[i].ToString();
+                String lstrComport = lstrKey;
                 ModbusSlave loModbus = new ModbusSlaveSerial(new Datastore[] { ds },
                   ModbusSerialType.RTU,
                   lstrComport,
@@ -305,6 +386,8 @@ namespace MainWindow
                   loParity,
                   loStopBits,
                   Handshake.None);
+                loModbus.RemoteByteOrder = (ByteOrder)Enum.Parse(typeof(Modbus.ByteOrder),
+                    Settings.Default.ComNumberExports[lstrKey]);
 
                 loModbus.ModbusDB = this.m_oModBus.ModbusDB;
 
@@ -436,6 +519,7 @@ namespace MainWindow
         {
             if (this.ServerStarted && this.m_oModBus != null)
             {
+                this.ServerStarted = false;
                 try
                 {
                     this.m_oModBus.StopListen();
@@ -478,11 +562,12 @@ namespace MainWindow
         {
             try
             {
-                this.StopModBus();
+               
                 this.Timer.Stop();
                 this.timer1.Stop();
                 this.StartToolStripMenuItem.Enabled = true;
                 this.StopToolStripMenuItem.Enabled = false;
+                this.StopModBus();
             }
             catch(Exception ex)
             {
@@ -540,7 +625,7 @@ namespace MainWindow
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            EricZhao.MiniDump.TerminateProcess(Process.GetCurrentProcess().Handle, 1);
         }
     }
 }

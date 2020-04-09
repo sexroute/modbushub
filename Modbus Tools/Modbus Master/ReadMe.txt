@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------------
                        Modbus Poll
-         Copyright (c) 2002-2018. Witte Software.
+         Copyright (c) 2002-2015. Witte Software.
 ------------------------------------------------------------------------------------
 
 
@@ -39,7 +39,7 @@ Modbus Poll overview:
 -----------------------------
 Modbus Poll is a powerful, easy to use, master simulating
 tool. Modbus Poll will run on all 32/64-bit Windows versions
-in use today - XP, Vista, 7, 8, 8.1 and 10.
+in use today - XP, Vista, 7, 8 and 8.1
 
 With Modbus Poll you can monitor and test your modbus
 slave devices. Some of the features:

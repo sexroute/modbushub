@@ -23,7 +23,7 @@ using System.Diagnostics;
 namespace Modbus
 {
     #region Enumerations
-    public enum ByteOrder : uint
+    public enum ByteOrder 
     {
         CDAB = 0,
         ABCD,
@@ -2083,10 +2083,8 @@ namespace Modbus
                     }
                     // Reply
                     send_buffer.Add((byte)ModbusCodes.WRITE_SINGLE_COIL);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(sa),
-                        ByteOrder.CDAB,this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(val),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
+                    send_buffer.AddRange(GetBytes(sa));
+                    send_buffer.AddRange(GetBytes(val));
                     break;
 
                 case ModbusCodes.WRITE_SINGLE_REGISTER:
@@ -2122,10 +2120,8 @@ namespace Modbus
                     }
                     // Reply
                     send_buffer.Add((byte)ModbusCodes.WRITE_SINGLE_REGISTER);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(sa),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(val),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
+                    send_buffer.AddRange(GetBytes(sa));
+                    send_buffer.AddRange(GetBytes(val));
                     break;
 
                 case ModbusCodes.WRITE_MULTIPLE_COILS:
@@ -2164,10 +2160,8 @@ namespace Modbus
                     }
                     // Reply
                     send_buffer.Add((byte)ModbusCodes.WRITE_MULTIPLE_COILS);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(sa),
-                    ByteOrder.CDAB, this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(qor),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
+                    send_buffer.AddRange(GetBytes(sa));
+                    send_buffer.AddRange(GetBytes(qor));
                     break;
 
                 case ModbusCodes.WRITE_MULTIPLE_REGISTERS:
@@ -2209,10 +2203,8 @@ namespace Modbus
                     }
                     // Reply
                     send_buffer.Add((byte)ModbusCodes.WRITE_MULTIPLE_REGISTERS);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(sa),
-                    ByteOrder.CDAB, this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(qor),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
+                    send_buffer.AddRange(GetBytes(sa));
+                    send_buffer.AddRange(GetBytes(qor));
                     break;
 
                 case ModbusCodes.MASK_WRITE_REGISTER:
@@ -2250,15 +2242,9 @@ namespace Modbus
                     }
                     // Reply
                     send_buffer.Add((byte)ModbusCodes.MASK_WRITE_REGISTER);
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(sa),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(and_mask),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
-                    send_buffer.AddRange(Change2BytesOrder(GetBytes(or_mask),
-                        ByteOrder.CDAB, this.RemoteByteOrder));
-//                     send_buffer.AddRange(GetBytes(sa));
-//                     send_buffer.AddRange(GetBytes(and_mask));
-//                     send_buffer.AddRange(GetBytes(or_mask));
+                    send_buffer.AddRange(GetBytes(sa));
+                    send_buffer.AddRange(GetBytes(and_mask));
+                    send_buffer.AddRange(GetBytes(or_mask));
                     break;
 
                 case ModbusCodes.READ_WRITE_MULTIPLE_REGISTERS:

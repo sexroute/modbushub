@@ -120,6 +120,8 @@ namespace MainWindow
             this.Close();
         }
 
+        
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             Settings.Default.ComNumber = (string)this.cbxSerialPort.SelectedItem;
@@ -127,6 +129,7 @@ namespace MainWindow
             Settings.Default.Baud = (int)this.NumBaud.Value;
             Settings.Default.Parity = this.cbxParity.SelectedIndex;
             Settings.Default.StopBits = this.cbxStopBits.SelectedIndex;
+           
             Settings.Default.Save();
             Settings.Default.Reload();
             Settings.Default.ByteOrder = this.cbxByteOrder.SelectedIndex;
@@ -148,7 +151,7 @@ namespace MainWindow
             loExports.m_oPorts = Settings.Default.ComNumberExports;
             if (loExports.m_oPorts == null)
             {
-                loExports.m_oPorts = new System.Collections.ArrayList();
+                loExports.m_oPorts = new System.Collections.Specialized.StringDictionary();
             }
             loExports.ShowDialog(this);
 
